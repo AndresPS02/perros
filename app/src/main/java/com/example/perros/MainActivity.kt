@@ -43,10 +43,11 @@ class MainActivity : AppCompatActivity(),
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
-    private fun initViewModel(){
+
+    private fun initViewModel() {
         viewModel = ViewModelProvider(this).get(ListaPerrosViewModel::class.java)
         viewModel.getLiveDataObserver().observe(this, Observer {
-            if (!it.isEmpty()){
+            if (!it.isEmpty()) {
                 adapter.setImagenes(it)
                 adapter.notifyDataSetChanged()
             }
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity(),
     }
 
 
-    private fun initAdapter(){
+    private fun initAdapter() {
         adapter = PerrosAdapter(perrosPics)
         binding.perros.layoutManager = LinearLayoutManager(this)
         binding.perros.adapter = adapter
@@ -72,10 +73,10 @@ class MainActivity : AppCompatActivity(),
                   //  perrosPics.clear()
                     //perrosPics.addAll(imagenes)
                     //adapter.notifyDataSetChanged()
-                //}else{
-                  //  Toast.makeText(this@MainActivity, "Error", Toast.LENGTH_LONG).show()
-              //  }
-            //}
+                }else{
+                    Toast.makeText(this@MainActivity, "Error", Toast.LENGTH_LONG).show()
+                }
+            }
             hideKeyboard()
         }
 
@@ -83,13 +84,25 @@ class MainActivity : AppCompatActivity(),
     } */
 
     override fun onQueryTextSubmit(searchString: String?): Boolean {
-        if(!searchString.isNullOrEmpty()){
+        if (!searchString.isNullOrEmpty()) {
             //buscarPerrosPorRaza(searchString.lowercase())
+            consultaPerros(searchString)
+        }else{
+            Toast.makeText(this@MainActivity, "Error", Toast.LENGTH_LONG).show()
+            hideKeyboard()
         }
+
         return true
     }
 
-    override fun onQueryTextChange(p0: String?): Boolean {
-        return true
+    fun consultaPerros(searchString: String?) {
+        if (!searchString.isNullOrEmpty()) {
+            viewModel.perroAPICall(searchString)
+            hideKeyboard()
+        }
     }
-}
+
+        override fun onQueryTextChange(p0: String?): Boolean {
+            return true
+        }
+    }
